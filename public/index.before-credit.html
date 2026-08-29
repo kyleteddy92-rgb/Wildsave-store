@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wildsave Electrical</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 28px;
+    }
+
+    header p {
+      margin-top: 6px;
+      color: #cbd5e1;
+    }
+
+    nav {
+      background: white;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .cart-button {
+      background: #111827;
+      color: white;
+      border: none;
+      padding: 11px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 18px;
+    }
+
+    .hero {
+      background: white;
+      padding: 30px;
+      border-radius: 14px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .hero h2 {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: #64748b;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .product {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.07);
+    }
+
+    .product h3 {
+      margin-bottom: 8px;
+    }
+
+    .category {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .price {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .stock {
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .add {
+      width: 100%;
+      border: none;
+      padding: 12px;
+      background: #111827;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .add:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px;
+      color: #64748b;
+    }
+
+    #cart {
+      display: none;
+      background: white;
+      margin-top: 25px;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .checkout {
+      margin-top: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 7px 0;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+    }
+
+    .checkout button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 13px;
+      border: none;
+      border-radius: 8px;
+      background: #111827;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #64748b;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>WILDSAVE ELECTRICAL</h1>
+  <p>Your trusted electrical store</p>
+</header>
+
+<nav>
+  <strong>Shop Electrical Products</strong>
+  <button class="cart-button" onclick="toggleCart()">
+    🛒 Cart (<span id="cartCount">0</span>)
+  </button>
+</nav>
+
+<main>
+
+  <section class="hero">
+    <h2>Electrical Products</h2>
+    <p>Browse our available products and place your order.</p>
+  </section>
+
+  <section id="products" class="products">
+    <div class="empty">Loading products...</div>
+  </section>
+
+  <section id="cart">
+    <h2>Your Cart</h2>
+
+    <div id="cartItems"></div>
+
+    <h3 style="margin-top:20px;">
+      Total: $<span id="cartTotal">0.00</span>
+    </h3>
+
+    <div class="checkout">
+      <h3>Checkout</h3>
+
+      <input
+        id="customerName"
+        type="text"
+        placeholder="Your name"
+      >
+
+      <input
+        id="phone"
+        type="tel"
+        placeholder="Phone number"
+      >
+
+      <button onclick="checkout()">
+        Place Order
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  © 2026 Wildsave Electrical Store
+</footer>
+
+<script>
+let products = [];
+let cart = [];
+
+async function loadProducts() {
+  try {
+    const response = await fetch("/api/products");
+
+    if (!response.ok) {
+      throw new Error("Could not load products");
+    }
+
+    products = await response.json();
+
+    displayProducts();
+  } catch (error) {
+    document.getElementById("products").innerHTML =
+      '<div class="empty">Could not load products.</div>';
+  }
+}
+
+function displayProducts() {
+  const container = document.getElementById("products");
+
+  if (products.length === 0) {
+    container.innerHTML =
+      '<div class="empty">No products available.</div>';
+    return;
+  }
+
+  container.innerHTML = products.map(product => `
+    <div class="product">
+      <h3>${escapeHTML(product.name)}</h3>
+
+      <div class="category">
+        ${escapeHTML(product.category)}
+      </div>
+
+      <div class="price">
+        $${Number(product.price).toFixed(2)}
+      </div>
+
+      <div class="stock">
+        ${product.stock > 0
+          ? `${product.stock} available`
+          : "Out of stock"}
+      </div>
+
+      <button
+        class="add"
+        ${product.stock <= 0 ? "disabled" : ""}
+        onclick="addToCart(${product.id})"
+      >
+        ${product.stock > 0 ? "Add to Cart" : "Out of Stock"}
+      </button>
+    </div>
+  `).join("");
+}
+
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+
+  if (!product) return;
+
+  const existing = cart.find(item => item.id === id);
+
+  if (existing) {
+    if (existing.qty < product.stock) {
+      existing.qty++;
+    }
+  } else {
+    cart.push({
+      id: product.id,
+      qty: 1
+    });
+  }
+
+  updateCart();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(item => item.id !== id);
+  updateCart();
+}
+
+function changeQuantity(id, amount) {
+  const item = cart.find(item => item.id === id);
+  const product = products.find(p => p.id === id);
+
+  if (!item || !product) return;
+
+  item.qty += amount;
+
+  if (item.qty <= 0) {
+    removeFromCart(id);
+    return;
+  }
+
+  if (item.qty > product.stock) {
+    item.qty = product.stock;
+  }
+
+  updateCart();
+}
+
+function updateCart() {
+  const container = document.getElementById("cartItems");
+  const count = document.getElementById("cartCount");
+  const totalElement = document.getElementById("cartTotal");
+
+  const totalQuantity = cart.reduce(
+    (sum, item) => sum + item.qty,
+    0
+  );
+
+  count.textContent = totalQuantity;
+
+  if (cart.length === 0) {
+    container.innerHTML =
+      '<div class="empty">Your cart is empty.</div>';
+
+    totalElement.textContent = "0.00";
+    return;
+  }
+
+  let total = 0;
+
+  container.innerHTML = cart.map(item => {
+    const product = products.find(p => p.id === item.id);
+
+    if (!product) return "";
+
+    const subtotal = product.price * item.qty;
+    total += subtotal;
+
+    return `
+      <div class="cart-item">
+        <div>
+          <strong>${escapeHTML(product.name)}</strong>
+          <br>
+          $${Number(product.price).toFixed(2)}
+        </div>
+
+        <div>
+          <button onclick="changeQuantity(${product.id}, -1)">−</button>
+          ${item.qty}
+          <button onclick="changeQuantity(${product.id}, 1)">+</button>
+          <button onclick="removeFromCart(${product.id})">Remove</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  totalElement.textContent = total.toFixed(2);
+}
+
+function toggleCart() {
+  const cartBox = document.getElementById("cart");
+
+  cartBox.style.display =
+    cartBox.style.display === "none" ||
+    cartBox.style.display === ""
+      ? "block"
+      : "none";
+}
+
+async function checkout() {
+  const customerName =
+    document.getElementById("customerName").value.trim();
+
+  const phone =
+    document.getElementById("phone").value.trim();
+
+  if (!customerName || !phone) {
+    alert("Please enter your name and phone number.");
+    return;
+  }
+
+  if (cart.length === 0) {
+    alert("Your cart is empty.");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        customerName,
+        phone,
+        items: cart
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Order failed.");
+      return;
+    }
+
+    alert(
+      "Order placed successfully! Order #" + data.id
+    );
+
+    cart = [];
+
+    document.getElementById("customerName").value = "";
+    document.getElementById("phone").value = "";
+
+    updateCart();
+    await loadProducts();
+
+  } catch (error) {
+    alert("Could not connect to the server.");
+  }
+}
+
+function escapeHTML(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+loadProducts();
+updateCart();
+</script>
+
+</body>
+</html>
