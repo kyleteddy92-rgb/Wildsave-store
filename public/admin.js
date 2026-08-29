@@ -127,6 +127,37 @@ async function loadProducts() {
   }
 }
 
+function showImagePreview(src) {
+  const preview = $("imagePreview");
+
+  if (!src) {
+    preview.removeAttribute("src");
+    preview.style.display = "none";
+    return;
+  }
+
+  preview.onerror = () => {
+    preview.style.display = "none";
+  };
+
+  preview.onload = () => {
+    preview.style.display = "block";
+  };
+
+  preview.src = src;
+}
+
+$("imageFile").addEventListener("change", () => {
+  const file = $("imageFile").files[0];
+
+  if (!file) {
+    return;
+  }
+
+  const url = URL.createObjectURL(file);
+  showImagePreview(url);
+});
+
 function openProduct(product = null) {
   $("pm").classList.add("open");
 
@@ -137,6 +168,10 @@ function openProduct(product = null) {
   $("ps").value = product?.stock ?? "";
   $("pi").value = product?.image ?? "";
   $("pd").value = product?.description ?? "";
+
+  $("imageFile").value = "";
+
+  showImagePreview(product?.image ?? "");
 
   $("mt").textContent =
     product ? "Edit Product" : "Add Product";
@@ -188,18 +223,17 @@ async function uploadProductImage() {
 async function saveProduct() {
   const id = $("pid").value;
 
-  const image = await uploadProductImage();
+  try {
+    const image = await uploadProductImage();
 
     const product = {
-    name: $("pn").value.trim(),
-    category: $("pc").value.trim(),
-    price: Number($("pp").value),
-    stock: Number($("ps").value),
-    image: image,
-    description: $("pd").value.trim()
-  };
-
-  try {
+      name: $("pn").value.trim(),
+      category: $("pc").value.trim(),
+      price: Number($("pp").value),
+      stock: Number($("ps").value),
+      image: image,
+      description: $("pd").value.trim()
+    };
     await api(
       id
         ? "/api/admin/products/" + id
@@ -237,30 +271,57 @@ async function loadOrders() {
   try {
     const orders = await api("/api/admin/orders");
 
-    $("orows").innerHTML = orders.map(order => `
-      <tr>
-        <td>${escapeHTML(order.id)}</td>
-        <td>
-          ${escapeHTML(order.customerName)}
-          <br>
-          ${escapeHTML(order.phone)}
-        </td>
-        <td>$${Number(order.total).toFixed(2)}</td>
-        <td>
-          <select onchange="changeStatus(${order.id}, this.value)">
-            ${["New", "Processing", "Completed", "Cancelled"]
-              .map(status => `
-                <option
-                  ${status === order.status ? "selected" : ""}
-                >
-                  ${status}
-                </option>
-              `).join("")}
-          </select>
-        </td>
-        <td>${escapeHTML(order.createdAt)}</td>
-      </tr>
-    `).join("");
+    $("orows").innerHTML = orders.map(order => {
+      const products = Array.isArray(order.items)
+        ? order.items.map(item =>
+            `${escapeHTML(item.name)} × ${item.qty}`
+          ).join("<br>")
+        : "";
+
+      return `
+        <tr>
+          <td>${escapeHTML(order.id)}</td>
+
+          <td>
+            <strong>${escapeHTML(order.customerName)}</strong>
+            <br>
+            ${escapeHTML(order.phone)}
+          </td>
+
+          <td>
+            ${escapeHTML(order.region || "—")}
+            <br>
+            ${escapeHTML(order.address || "—")}
+          </td>
+
+          <td>
+            ${products || "—"}
+          </td>
+
+          <td>
+            ${escapeHTML(order.paymentMethod || "—")}
+          </td>
+
+          <td>$${Number(order.total).toFixed(2)}</td>
+
+          <td>
+            <select onchange="changeStatus(${order.id}, this.value)">
+              ${["New", "Processing", "Completed", "Cancelled"]
+                .map(status => `
+                  <option
+                    value="${status}"
+                    ${status === order.status ? "selected" : ""}
+                  >
+                    ${status}
+                  </option>
+                `).join("")}
+            </select>
+          </td>
+
+          <td>${escapeHTML(order.createdAt)}</td>
+        </tr>
+      `;
+    }).join("");
   } catch (error) {
     alert(error.message);
   }

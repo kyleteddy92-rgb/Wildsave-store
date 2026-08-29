@@ -296,6 +296,29 @@
         placeholder="Phone number"
       >
 
+      <select
+        id="region"
+        style="width:100%;padding:12px;margin:7px 0;border:1px solid #cbd5e1;border-radius:8px;"
+      >
+        <option value="">Select Region</option>
+        <option value="South Africa">South Africa</option>
+        <option value="Zimbabwe">Zimbabwe</option>
+      </select>
+
+      <input
+        id="address"
+        type="text"
+        placeholder="Delivery address"
+      >
+
+      <select
+        id="paymentMethod"
+        style="width:100%;padding:12px;margin:7px 0;border:1px solid #cbd5e1;border-radius:8px;"
+      >
+        <option value="Bank Transfer">Bank Transfer</option>
+        <option value="Pay on Delivery">Pay on Delivery</option>
+      </select>
+
       <button onclick="checkout()">
         Place Order
       </button>
@@ -484,8 +507,17 @@ async function checkout() {
   const phone =
     document.getElementById("phone").value.trim();
 
-  if (!customerName || !phone) {
-    alert("Please enter your name and phone number.");
+  const region =
+    document.getElementById("region").value.trim();
+
+  const address =
+    document.getElementById("address").value.trim();
+
+  const paymentMethod =
+    document.getElementById("paymentMethod").value;
+
+  if (!customerName || !phone || !region || !address) {
+    alert("Please enter your name, phone number, region and delivery address.");
     return;
   }
 
@@ -503,6 +535,9 @@ async function checkout() {
       body: JSON.stringify({
         customerName,
         phone,
+        region,
+        address,
+        paymentMethod,
         items: cart
       })
     });
@@ -522,6 +557,9 @@ async function checkout() {
 
     document.getElementById("customerName").value = "";
     document.getElementById("phone").value = "";
+    document.getElementById("region").value = "";
+    document.getElementById("address").value = "";
+    document.getElementById("paymentMethod").value = "Bank Transfer";
 
     updateCart();
     await loadProducts();

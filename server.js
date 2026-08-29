@@ -130,11 +130,11 @@ app.get("/api/products", (req, res) => {
 });
 
 app.post("/api/orders", (req, res) => {
-  const { customerName, phone, items } = req.body;
+  const { customerName, phone, region, address, paymentMethod, items } = req.body;
 
-  if (!customerName || !phone || !Array.isArray(items) || items.length === 0) {
+  if (!customerName || !phone || !region || !address || !paymentMethod || !Array.isArray(items) || items.length === 0) {
     return res.status(400).json({
-      error: "Customer name, phone and items are required."
+      error: "Name, phone, region, delivery address and payment method are required."
     });
   }
 
@@ -185,6 +185,9 @@ app.post("/api/orders", (req, res) => {
     id: Date.now(),
     customerName: String(customerName).trim(),
     phone: String(phone).trim(),
+    region: String(region).trim(),
+    address: String(address).trim(),
+    paymentMethod: String(paymentMethod).trim(),
     items: orderItems,
     total: Number(total.toFixed(2)),
     status: "New",
@@ -254,7 +257,7 @@ app.get("/api/admin/products", adminOnly, (req, res) => {
 });
 
 app.post("/api/admin/products", adminOnly, (req, res) => {
-  const { name, price, stock, category } = req.body;
+  const { name, price, stock, category, image, description } = req.body;
 
   if (
     !name ||
@@ -273,7 +276,9 @@ app.post("/api/admin/products", adminOnly, (req, res) => {
     stock: Math.max(0, Number(stock)),
     category: String(
       category || "General"
-    ).trim()
+    ).trim(),
+    image: String(image || "").trim(),
+    description: String(description || "").trim()
   };
 
   db.products.push(product);
@@ -281,6 +286,45 @@ app.post("/api/admin/products", adminOnly, (req, res) => {
 
   res.status(201).json(product);
 });
+
+app.put(
+  "/api/admin/products/:id",
+  adminOnly,
+  (req, res) => {
+    const product = db.products.find(
+      p => p.id === Number(req.params.id)
+    );
+
+    if (!product) {
+      return res.status(404).json({
+        error: "Product not found."
+      });
+    }
+
+    const { name, price, stock, category, image, description } = req.body;
+
+    if (
+      !name ||
+      Number.isNaN(Number(price)) ||
+      Number.isNaN(Number(stock))
+    ) {
+      return res.status(400).json({
+        error: "Name, price and stock are required."
+      });
+    }
+
+    product.name = String(name).trim();
+    product.price = Number(price);
+    product.stock = Math.max(0, Number(stock));
+    product.category = String(category || "General").trim();
+    product.image = String(image || "").trim();
+    product.description = String(description || "").trim();
+
+    saveDB();
+
+    res.json(product);
+  }
+);
 
 app.delete(
   "/api/admin/products/:id",
