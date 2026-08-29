@@ -181,6 +181,63 @@
       color: #64748b;
     }
   </style>
+<style>
+.site-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  background: #111;
+}
+
+.site-navigation a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 9px 13px;
+  border-radius: 8px;
+}
+
+.site-navigation a:hover {
+  background: #333;
+}
+
+.info-section {
+  margin: 25px auto;
+  padding: 25px;
+  max-width: 900px;
+  border-radius: 12px;
+  background: #f5f5f5;
+}
+
+.info-section h2 {
+  margin-top: 0;
+}
+
+.info-section a {
+  display: inline-block;
+  padding: 12px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  background: #25D366;
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .site-navigation a {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .info-section {
+    margin: 18px 10px;
+    padding: 18px;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -198,8 +255,36 @@
 </nav>
 
 <main>
+<nav class="site-navigation">
+  <a href="#home">Home</a>
+  <a href="#products">Products</a>
+  <a href="#about">About Us</a>
+  <a href="#contact">Contact Us</a>
+  <a href="#group">Join Our Group</a>
+</nav>
 
-  <section class="hero">
+<section id="about" class="info-section">
+  <h2>About Us</h2>
+  <p>Welcome to Wildsave Electrical. We provide quality electrical products for homes, businesses and everyday electrical needs.</p>
+</section>
+
+<section id="contact" class="info-section">
+  <h2>Contact Us</h2>
+  <p>For orders, questions or assistance, please contact us.</p>
+  <p><strong>Phone:</strong> +27 78 282 2126</p>
+  <p><strong>Phone:</strong> +27 81 384 3192</p>
+  <p><strong>Email:</strong> YOUR EMAIL ADDRESS</p>
+</section>
+
+<section id="group" class="info-section">
+  <h2>Join Our Group</h2>
+  <p>Join our group for updates, new products and announcements.</p>
+  <a href="https://chat.whatsapp.com/KQh0GneVHpH3abyRfnjN8P?s=cl&p=a&ilr=4" target="_blank" rel="noopener">Join Our Group</a>
+</section>
+
+
+
+  <section id="home" class="hero">
     <h2>Electrical Products</h2>
     <p>Browse our available products and place your order.</p>
   </section>
