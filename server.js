@@ -78,6 +78,9 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "public")));
 
+const uploadDir = path.join(__dirname, "public", "uploads");
+fs.mkdirSync(uploadDir, { recursive: true });
+
 const uploadStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "public", "uploads"));
