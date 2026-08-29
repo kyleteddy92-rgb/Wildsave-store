@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
+const { v2: cloudinary } = require("cloudinary");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -78,21 +79,8 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "public")));
 
-const uploadDir = path.join(__dirname, "public", "uploads");
-fs.mkdirSync(uploadDir, { recursive: true });
-
-const uploadStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "public", "uploads"));
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, Date.now() + "-" + Math.round(Math.random() * 1e9) + ext);
-  }
-});
-
 const upload = multer({
-  storage: uploadStorage,
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: 5 * 1024 * 1024
   },
@@ -105,18 +93,44 @@ const upload = multer({
   }
 });
 
-app.post("/api/admin/upload", adminOnly, upload.single("image"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({
-      error: "No image selected."
-    });
-  }
-
-  res.json({
-    image: "/uploads/" + req.file.filename
-  });
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+app.post("/api/admin/upload", adminOnly, upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        error: "No image selected."
+      });
+    }
+
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "wildsave"
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+
+      stream.end(req.file.buffer);
+    });
+
+    res.json({
+      image: result.secure_url
+    });
+  } catch (error) {
+    console.error("Cloudinary upload error:", error);
+    res.status(500).json({
+      error: "Image upload failed."
+    });
+  }
+});
 
 function adminOnly(req, res, next) {
   if (!req.session.admin) {
