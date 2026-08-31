@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1788087750428",
+    "name": "Tactical survival watch ",
+    "description": "",
+    "price": "25",
+    "category": "Smartwatches",
+    "stock": 8,
+    "colors": [
+      "Black"
+    ],
+    "image": "https://res.cloudinary.com/ufr5dykv/image/upload/v1788087750/wildsave/products/snllktuhypvzfx0zrlqb.jpg",
+    "createdAt": "2026-08-30T11:02:30.428Z"
+  },
+  {
+    "id": "1788088364740",
+    "name": "Tactical survival watch ",
+    "description": "",
+    "price": "25",
+    "category": "Smartwatches",
+    "stock": 8,
+    "colors": [
+      "Black"
+    ],
+    "image": "https://res.cloudinary.com/ufr5dykv/image/upload/v1788088364/wildsave/products/wli2mp7aemq3fylfkcrq.jpg",
+    "createdAt": "2026-08-30T11:12:44.740Z"
+  },
+  {
+    "id": "1788185677331",
+    "name": "Air conditioner ",
+    "description": "",
+    "price": "45",
+    "category": "Other",
+    "stock": 5,
+    "colors": [
+      "4",
+      "White"
+    ],
+    "image": "https://res.cloudinary.com/ufr5dykv/image/upload/v1788185676/wildsave/products/vgj1bxff4kmhquc67kor.jpg",
+    "createdAt": "2026-08-31T14:14:37.331Z"
+  }
+]
