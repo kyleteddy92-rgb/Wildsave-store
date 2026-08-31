@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wildsave Admin</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#061b11;color:white}
+header{padding:20px;background:#04150c;border-bottom:1px solid #17452b}
+h1{margin:0;color:#54dc83}
+main{max-width:900px;margin:auto;padding:30px 20px}
+.card{background:#0b2c1c;border:1px solid #17452b;border-radius:16px;padding:25px;margin-bottom:20px}
+input,textarea,select{width:100%;padding:12px;margin:7px 0 14px;border:0;border-radius:8px}
+button{border:0;border-radius:8px;padding:12px 18px;background:#1688ff;color:white;font-weight:bold;cursor:pointer}
+button:hover{opacity:.9}
+.hidden{display:none}
+.message{margin-top:15px;padding:10px;border-radius:8px;background:#103b25}
+.product{padding:15px;background:#103b25;border-radius:10px;margin-top:10px}
+.product img{width:180px;height:180px;object-fit:contain;border-radius:12px;background:#123c28;border:1px solid #17452b}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Wildsave Admin Panel</h1>
+</header>
+
+<main>
+
+<div id="loginCard" class="card">
+<h2>Admin Login</h2>
+
+<form id="loginForm">
+<input id="username" placeholder="Username" required>
+<input id="password" type="password" placeholder="Password" required>
+<button type="submit">Login</button>
+</form>
+
+<div id="loginMessage"></div>
+</div>
+
+<div id="dashboard" class="hidden">
+
+<div class="card">
+<h2>Add Product</h2>
+
+<form id="productForm">
+
+<label>Product Name</label>
+<input id="name" required>
+
+<label>Description</label>
+<textarea id="description"></textarea>
+
+<label>Price</label>
+<input id="price" type="number" step="0.01" required>
+
+<label>Category</label>
+<select id="category">
+<option>Smartwatches</option>
+<option>Earbuds</option>
+<option>Smartphones</option>
+<option>Chargers</option>
+<option>Speakers</option>
+<option>CCTV Cameras</option>
+<option>Other</option>
+</select>
+
+<label>Stock</label>
+<input id="stock" type="number" min="0" value="0">
+
+<label>Colours</label>
+<input id="colors" placeholder="Black:5, Blue:3, Red:2">
+
+<label>Product Image</label>
+<input id="image" type="file" accept="image/*">
+
+<button type="submit">Add Product</button>
+
+</form>
+
+<div id="productMessage"></div>
+</div>
+
+<div class="card">
+<h2>Current Products</h2>
+<div id="products"></div>
+</div>
+
+</div>
+
+</main>
+
+<script>
+const loginCard=document.getElementById("loginCard");
+const dashboard=document.getElementById("dashboard");
+
+async function checkLogin(){
+  const r=await fetch("/api/admin/status");
+  const data=await r.json();
+
+  if(data.loggedIn){
+    loginCard.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    loadProducts();
+  }
+}
+
+document.getElementById("loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+
+  const username=document.getElementById("username").value;
+  const password=document.getElementById("password").value;
+
+  const r=await fetch("/api/admin/login",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({username,password})
+  });
+
+  const data=await r.json();
+
+  if(data.success){
+    loginCard.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    loadProducts();
+  }else{
+    document.getElementById("loginMessage").textContent=data.error;
+  }
+});
+
+document.getElementById("productForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+
+  const message=document.getElementById("productMessage");
+  message.textContent="Uploading...";
+
+  let imageUrl="";
+
+  const file=document.getElementById("image").files[0];
+
+  if(file){
+    const formData=new FormData();
+    formData.append("image",file);
+
+    const upload=await fetch("/api/admin/upload",{
+      method:"POST",
+      body:formData
+    });
+
+    const result=await upload.json();
+
+    if(!result.success){
+      message.textContent=result.error||"Image upload failed";
+      return;
+    }
+
+    imageUrl=result.imageUrl;
+  }
+
+  const colorStock={};
+
+  document.getElementById("colors").value
+    .split(",")
+    .map(x=>x.trim())
+    .filter(Boolean)
+    .forEach(item=>{
+      const parts=item.split(":");
+      const color=parts[0].trim();
+      const quantity=parseInt(parts[1],10);
+
+      if(color){
+        colorStock[color]=Number.isFinite(quantity)?quantity:0;
+      }
+    });
+
+  const colors=Object.keys(colorStock);
+
+  const product={
+    name:document.getElementById("name").value,
+    description:document.getElementById("description").value,
+    price:document.getElementById("price").value,
+    category:document.getElementById("category").value,
+    stock:document.getElementById("stock").value,
+    colors,
+    colorStock,
+    image:imageUrl
+  };
+
+  const editingId=window.editingProductId;
+
+  const r=await fetch(
+    editingId
+      ? "/api/admin/products/"+editingId
+      : "/api/admin/products",
+    {
+      method:editingId ? "PUT" : "POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(product)
+    }
+  );
+
+  const data=await r.json();
+
+  if(data.success){
+    message.textContent=editingId
+      ? "Product updated successfully!"
+      : "Product added successfully!";
+
+    document.getElementById("productForm").reset();
+
+    window.editingProductId=null;
+
+    const button=document.querySelector('#productForm button[type="submit"]');
+    if(button) button.textContent="Add Product";
+
+    loadProducts();
+  }else{
+    message.textContent=data.error||"Could not add product";
+  }
+});
+
+async function loadProducts(){
+  const r=await fetch("/api/products");
+  const products=await r.json();
+  const container=document.getElementById("products");
+
+  if(!products.length){
+    container.innerHTML="<p>No products yet.</p>";
+    return;
+  }
+
+  container.innerHTML=products.map(p=>{
+    const cs=p.colorStock||{};
+
+    const colours=Object.keys(cs).length
+      ? Object.entries(cs).map(([color,qty]) =>
+          `<div>${color} — ${qty} left</div>`
+        ).join("")
+      : (p.colors||[]).map(color =>
+          `<div>${color} — ${p.stock} left</div>`
+        ).join("");
+
+    return `
+      <div class="product" style="display:block;padding:15px">
+
+        <div style="
+          width:100%;
+          aspect-ratio:1/1;
+          background:#123c28;
+          border-radius:12px;
+          overflow:hidden;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+        ">
+          ${p.image
+            ? `<img src="${p.image}"
+                alt="${p.name}"
+                style="width:100%;height:100%;object-fit:contain">`
+            : `<span style="font-size:40px">📦</span>`
+          }
+        </div>
+
+        <div class="product-info">
+
+          <h3>${p.name}</h3>
+
+          <p><strong>Price:</strong> $${p.price}</p>
+
+          <p><strong>Category:</strong> ${p.category||"Other"}</p>
+
+          <p><strong>Total Stock:</strong> ${p.stock}</p>
+
+          <p>
+            <strong>Colours:</strong><br>
+            ${colours || "No colour stock entered"}
+          </p>
+
+          <p>
+            <strong>Description:</strong><br>
+            ${p.description || "No description"}
+          </p>
+
+          <div style="display:flex;gap:10px;margin-top:15px">
+
+            <button
+              type="button"
+              onclick='editProduct(${JSON.stringify(p).replace(/'/g,"&#39;")})'>
+              Edit
+            </button>
+
+            <button
+              type="button"
+              onclick="deleteProduct('${p.id}')"
+              style="background:#d93636">
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+checkLogin();
+</script>
+
+</body>
+</html>
+
+<script>
+async function deleteProduct(id){
+  if(!confirm("Delete this product?")) return;
+
+  const r=await fetch("/api/admin/products/"+id,{
+    method:"DELETE"
+  });
+
+  const data=await r.json();
+
+  if(data.success){
+    alert("Product deleted successfully.");
+    loadProducts();
+  }else{
+    alert(data.error || "Delete failed");
+  }
+}
+
+function editProduct(p){
+  document.getElementById("name").value=p.name||"";
+  document.getElementById("description").value=p.description||"";
+  document.getElementById("price").value=p.price||"";
+  document.getElementById("category").value=p.category||"Other";
+  document.getElementById("stock").value=p.stock||0;
+
+  const cs=p.colorStock||{};
+
+  if(Object.keys(cs).length){
+    document.getElementById("colors").value=
+      Object.entries(cs)
+      .map(([color,qty])=>color+":"+qty)
+      .join(", ");
+  }else{
+    document.getElementById("colors").value=
+      (p.colors||[])
+      .map(color=>color+":"+(p.stock||0))
+      .join(", ");
+  }
+
+  window.editingProductId=p.id;
+
+  const button=document.querySelector('#productForm button[type="submit"]');
+  if(button) button.textContent="Save Changes";
+
+  document.getElementById("productMessage").textContent=
+    "Editing "+p.name;
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+</script>

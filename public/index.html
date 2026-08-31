@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wildsave Electrical Store</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#061b11;
+  color:#fff;
+  min-height:100vh;
+}
+
+.floating-tech{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}.tech{position:absolute;font-size:42px;opacity:.10;animation:floatGadget 10s ease-in-out infinite}.tech1{left:8%;top:20%}.tech2{right:10%;top:27%;animation-delay:2s}.tech3{left:43%;bottom:15%;animation-delay:4s}.tech4{right:28%;bottom:25%;animation-delay:6s}.tech5{left:18%;bottom:8%;animation-delay:8s}.tech6{right:45%;top:12%;animation-delay:3s}@keyframes floatGadget{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-24px) rotate(6deg)}}header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 5%;
+  background:#04150c;
+  border-bottom:1px solid #17452b;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo{
+  width:52px;
+  height:58px;
+  background:#1688ff;
+  border-radius:7px 7px 10px 10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+
+.logo:before{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:13px;
+  border:4px solid white;
+  border-bottom:0;
+  border-radius:14px 14px 0 0;
+  top:-10px;
+}
+
+.logo span{
+  font-size:8px;
+  font-weight:900;
+}
+
+.brand h1{font-size:19px}
+.brand p{color:#8ed6a9;font-size:11px;margin-top:4px}
+
+.menu-button{
+  width:46px;
+  height:46px;
+  border:0;
+  border-radius:10px;
+  background:#0d3b25;
+  color:white;
+  font-size:25px;
+}
+
+nav{
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  padding:15px;
+  background:#041c11;
+}
+
+nav a{
+  color:#d7f5df;
+  text-decoration:none;
+  font-weight:bold;
+  font-size:14px;
+}
+
+nav a:hover{color:#55df86}
+
+main{
+  max-width:1250px;
+  margin:auto;
+  padding:40px 5%;
+}
+
+.hero{
+  text-align:center;
+  padding:35px 0 45px;
+}
+
+.hero h2{
+  font-size:clamp(32px,6vw,58px);
+  line-height:1.05;
+  margin-bottom:15px;
+}
+
+.hero h2 span{color:#54dc83}
+
+.hero p{
+  color:#a9cdb5;
+  margin-bottom:28px;
+}
+
+.search{
+  max-width:700px;
+  margin:auto;
+  display:flex;
+  background:white;
+  padding:6px;
+  border-radius:15px;
+}
+
+.search input{
+  flex:1;
+  border:0;
+  outline:0;
+  padding:15px;
+  font-size:16px;
+}
+
+.search button{
+  border:0;
+  background:#1688ff;
+  color:white;
+  padding:0 22px;
+  border-radius:11px;
+  font-weight:bold;
+}
+
+.title{
+  margin:30px 0 18px;
+}
+
+.categories{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:12px;
+}
+
+.category{
+  background:#0b3521;
+  border:1px solid #17452b;
+  border-radius:13px;
+  padding:20px 10px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.category:hover{
+  background:#12552f;
+  transform:translateY(-3px);
+}
+
+.category-icon{
+  font-size:30px;
+  margin-bottom:8px;
+}
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
+
+.product{
+  background:#0b2c1c;
+  border-radius:15px;
+  overflow:hidden;
+  border:1px solid #17452b;
+  cursor:pointer;
+}
+
+.product:hover{
+  transform:translateY(-5px);
+}
+
+.product-image{
+  width:100%;
+  aspect-ratio:1;
+  background:#123c28;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:55px;
+}
+
+.product-info{padding:15px}
+.product-info h3{font-size:15px;margin-bottom:7px}
+
+.price{
+  color:#65e18f;
+  font-size:17px;
+  font-weight:800;
+}
+
+.stock{
+  color:#9ebbaa;
+  font-size:12px;
+  margin-top:6px;
+}
+
+footer{
+  margin-top:50px;
+  padding:35px;
+  text-align:center;
+  background:#04170d;
+  color:#9ab5a2;
+}
+
+@media(max-width:600px){
+  .menu-button{
+    display:block;
+  }
+
+  nav{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    gap:0;
+    padding:0;
+  }
+
+  nav.menu-open{
+    display:flex;
+  }
+
+  nav a{
+    width:100%;
+    text-align:center;
+    padding:16px;
+    border-bottom:1px solid #17452b;
+  }
+}
+
+@media(max-width:900px){
+  .products{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .categories{grid-template-columns:repeat(3,1fr)}
+}
+
+@media(max-width:600px){
+  nav{
+    gap:14px;
+    overflow-x:auto;
+    justify-content:flex-start;
+  }
+
+  nav a{white-space:nowrap;font-size:12px}
+
+  .products{grid-template-columns:repeat(2,1fr);gap:12px}
+
+  .categories{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+
+<style id="wildsave-product-layout">
+.products{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:28px;
+  width:100%;
+  max-width:1200px;
+  margin:0 auto;
+}
+
+.product{
+  min-width:0;
+  background:#fff;
+  border-radius:14px;
+  overflow:hidden;
+}
+
+.product-image{
+  width:100%;
+  aspect-ratio:1/1;
+  height:auto;
+  background:#f2f2f2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border-radius:12px;
+}
+
+.product-image img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+
+.product-info{
+  padding:12px 4px 16px;
+}
+
+.product-info h3{
+  margin:0 0 8px;
+  font-size:17px;
+  line-height:1.3;
+}
+
+.product-info .price{
+  font-size:16px;
+  font-weight:bold;
+  margin-bottom:6px;
+}
+
+.product-info .stock{
+  font-size:14px;
+}
+
+@media(max-width:900px){
+  .products{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:20px;
+  }
+}
+
+@media(max-width:500px){
+  .products{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+  }
+
+  .product-info h3{
+    font-size:15px;
+  }
+
+  .product-info .price{
+    font-size:14px;
+  }
+}
+</style>
+
+
+<style id="product-details-style">
+.product{
+  cursor:pointer;
+}
+
+.product:hover{
+  transform:translateY(-3px);
+  transition:.2s;
+}
+
+#productModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(0,0,0,.75);
+  padding:25px;
+  overflow-y:auto;
+  align-items:center;
+  justify-content:center;
+}
+
+#productModal.show{
+  display:flex;
+}
+
+.modal-box{
+  position:relative;
+  width:100%;
+  max-width:550px;
+  background:#0b2c1c;
+  border:1px solid #17452b;
+  border-radius:18px;
+  padding:25px;
+  color:white;
+}
+
+.modal-image{
+  width:100%;
+  aspect-ratio:1/1;
+  background:#123c28;
+  border-radius:14px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:20px;
+}
+
+.modal-image img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.close-modal{
+  position:absolute;
+  right:12px;
+  top:12px;
+  width:40px;
+  height:40px;
+  border:0;
+  border-radius:50%;
+  background:#17452b;
+  color:white;
+  font-size:28px;
+  cursor:pointer;
+  z-index:2;
+}
+
+.modal-box h2{
+  margin:10px 0;
+}
+
+.modal-price{
+  color:#65e18f;
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:20px;
+}
+
+.detail-color{
+  display:flex;
+  justify-content:space-between;
+  padding:12px;
+  margin:8px 0;
+  background:#103b25;
+  border-radius:10px;
+}
+
+.description{
+  color:#c9dfd0;
+  line-height:1.6;
+}
+</style>
+
+</head>
+
+<body>
+<div id="productModal"></div>
+<div class="floating-tech" aria-hidden="true">
+<span class="tech tech1">⌚</span>
+<span class="tech tech2">📹</span>
+<span class="tech tech3">🛒</span>
+<span class="tech tech4">⌚</span>
+<span class="tech tech5">📹</span>
+<span class="tech tech6">🛒</span>
+</div>
+
+<header>
+
+  <div class="brand">
+
+    <div class="logo">
+      <span>WILDSAVE</span>
+    </div>
+
+    <div>
+      <h1>Wildsave Electrical Store</h1>
+      <p>Affordable Smart Gadgets, Trusted Electrical Store</p>
+    </div>
+
+  </div>
+
+  <button class="menu-button" id="menuButton" type="button">☰</button>
+
+</header>
+
+<nav>
+  <a href="index.html">Home</a>
+  <a href="about.html">About Us</a>
+  <a href="contact.html">Contact Us</a>
+  <a href="group.html">Join Our Group</a>
+</nav>
+
+<main>
+
+<section class="hero">
+
+  <h2>
+    Smart gadgets.<br>
+    <span>Better prices.</span>
+  </h2>
+
+  <p>
+    Affordable smart electrical gadgets from Wildsave.
+  </p>
+
+  <div class="search">
+    <input id="searchInput" type="text" placeholder="Search for a product...">
+    <button onclick="searchProducts()">Search</button>
+  </div>
+
+</section>
+
+<h2 class="title">Browse Categories</h2>
+
+<section class="categories">
+
+  <div class="category" onclick="showAllProducts()">
+    <div class="category-icon">🛍️</div>
+    All
+  </div>
+
+  <div class="category" onclick="filterCategory('Smartwatches')">
+    <div class="category-icon">⌚</div>
+    Smartwatches
+  </div>
+
+  <div class="category" onclick="filterCategory('Earbuds')">
+    <div class="category-icon">🎧</div>
+    Earbuds
+  </div>
+
+  <div class="category" onclick="filterCategory('Smartphones')">
+    <div class="category-icon">📱</div>
+    Smartphones
+  </div>
+
+  <div class="category" onclick="filterCategory('Chargers')">
+    <div class="category-icon">🔌</div>
+    Chargers
+  </div>
+
+  <div class="category" onclick="filterCategory('Speakers')">
+    <div class="category-icon">🔊</div>
+    Speakers
+  </div>
+
+  <div class="category" onclick="filterCategory('CCTV Cameras')">
+    <div class="category-icon">📹</div>
+    CCTV Cameras
+  </div>
+
+  <div class="category" onclick="filterCategory('Other')">
+    <div class="category-icon">📦</div>
+    Others
+  </div>
+
+</section>
+
+<h2 class="title">Our Products</h2>
+
+<section class="products" id="products"></section>
+
+</main>
+
+<footer>
+  © 2026 Wildsave Electrical Store<br><br>
+  <strong>Created by KYLE NCUBE</strong><br>
+  +263 785 277 586
+</footer>
+
+<script>
+let allProducts=[];
+
+async function searchProducts(){
+  const input=document.getElementById("searchInput");
+  const search=(input ? input.value : "").toLowerCase().trim();
+
+  const matches=allProducts.filter(product=>{
+    const text=[
+      product.name,
+      product.category,
+      product.description,
+      ...(product.colors||[])
+    ].join(" ").toLowerCase();
+
+    return !search || text.includes(search);
+  });
+
+  renderProducts(matches);
+}
+
+if(document.getElementById("searchInput")){
+  document.getElementById("searchInput")
+    .addEventListener("input",searchProducts);
+
+  document.getElementById("searchInput")
+    .addEventListener("keydown",e=>{
+      if(e.key==="Enter"){
+        searchProducts();
+      }
+    });
+}
+
+function filterCategory(category){
+  const standardCategories=[
+    "smartwatches",
+    "earbuds",
+    "smartphones",
+    "chargers",
+    "speakers",
+    "cctv cameras"
+  ];
+
+  const matches=allProducts.filter(product=>{
+    const productCategory=String(product.category || "Other")
+      .trim()
+      .toLowerCase();
+
+    if(category.toLowerCase()==="other"){
+      return !standardCategories.includes(productCategory);
+    }
+
+    return productCategory===category.toLowerCase();
+  });
+
+  renderProducts(matches);
+
+  document.getElementById("products")
+    .scrollIntoView({behavior:"smooth"});
+}
+
+
+function showAllProducts(){
+  const title=document.querySelector(".title:nth-of-type(2)");
+
+  if(title){
+    title.textContent="Our Products";
+  }
+
+  renderProducts(allProducts);
+}
+
+function renderProducts(products){
+  const container=document.getElementById("products");
+
+  if(!products.length){
+    container.innerHTML="<p>No products found.</p>";
+    return;
+  }
+
+  container.innerHTML=products.map(product=>`
+    <div class="product"
+      onclick='showProductDetails(${JSON.stringify(product).replace(/'/g,"&#39;")})'>
+
+      <div class="product-image">
+        ${product.image
+          ? `<img src="${product.image}" alt="${product.name}">`
+          : "📦"}
+      </div>
+
+      <div class="product-info">
+        <h3>${product.name}</h3>
+        <div class="price">$${product.price}</div>
+
+        <div class="stock">
+          ${Number(product.stock)>0
+            ? "Available"
+            : "Out of stock"}
+        </div>
+      </div>
+
+    </div>
+  `).join("");
+}
+
+const menuButton=document.getElementById("menuButton");
+const navigation=document.querySelector("nav");
+
+if(menuButton && navigation){
+  menuButton.addEventListener("click",()=>{
+    navigation.classList.toggle("menu-open");
+
+    menuButton.textContent=
+      navigation.classList.contains("menu-open")
+        ? "✕"
+        : "☰";
+  });
+}
+
+async function loadProducts(){
+  const container=document.getElementById("products");
+
+  try{
+    const response=await fetch("/api/products");
+    const products=await response.json();
+
+    allProducts=products;
+
+    renderProducts(products);
+
+  }catch(error){
+    console.error("Products loading error:",error);
+    container.innerHTML="<p>Unable to load products.</p>";
+  }
+}
+
+
+function showProductDetails(product){
+  const colorStock=product.colorStock || {};
+
+  let colors=Object.keys(colorStock);
+
+  if(!colors.length){
+    colors=product.colors || [];
+  }
+
+  const firstColor=colors[0] || "";
+  const firstStock=firstColor
+    ? (Object.prototype.hasOwnProperty.call(colorStock,firstColor)
+        ? Number(colorStock[firstColor])
+        : Number(product.stock)||0)
+    : 0;
+
+  const colorOptions=colors.length
+    ? colors.map(color=>`
+        <option value="${color}">
+          ${color}
+        </option>
+      `).join("")
+    : `<option value="">No colour available</option>`;
+
+  document.getElementById("productModal").innerHTML=`
+    <div class="modal-box">
+
+      <button class="close-modal"
+        onclick="closeProductDetails()">×</button>
+
+      <div class="modal-image">
+        ${product.image
+          ? `<img src="${product.image}" alt="${product.name}">`
+          : "📦"}
+      </div>
+
+      <h2>${product.name}</h2>
+
+      <div class="modal-price">
+        $${Number(product.price).toFixed(2)}
+      </div>
+
+      <h3>Colour</h3>
+
+      <select id="cartColor"
+        style="
+          width:100%;
+          padding:12px;
+          border-radius:8px;
+          border:0;
+          margin-bottom:10px;
+        "
+        onchange="updateSelectedStock(${JSON.stringify(product).replace(/'/g,"&#39;")})">
+
+        ${colorOptions}
+
+      </select>
+
+      <div id="selectedStock"
+        style="
+          margin-bottom:15px;
+          color:#65e18f;
+          font-weight:bold;
+        ">
+        ${firstColor
+          ? firstStock+" left"
+          : "No stock available"}
+      </div>
+
+      <h3>Quantity</h3>
+
+      <input
+        id="cartQuantity"
+        type="number"
+        min="1"
+        max="${firstStock}"
+        value="${firstStock>0 ? 1 : 0}"
+        style="
+          width:100%;
+          padding:12px;
+          border-radius:8px;
+          border:0;
+          margin-bottom:15px;
+        "
+        ${firstStock<=0 ? "disabled" : ""}
+      >
+
+      <button
+        type="button"
+        onclick='addToCart(${JSON.stringify(product).replace(/'/g,"&#39;")})'
+        style="width:100%;margin-bottom:20px"
+        ${firstStock<=0 ? "disabled" : ""}>
+        🛒 Add to Cart
+      </button>
+
+      <h3>Description</h3>
+
+      <p class="description">
+        ${product.description || "No description available."}
+      </p>
+
+    </div>
+  `;
+
+  document.getElementById("productModal").classList.add("show");
+}
+
+function updateSelectedStock(product){
+  const select=document.getElementById("cartColor");
+  const quantity=document.getElementById("cartQuantity");
+
+  if(!select) return;
+
+  const color=select.value;
+  const colorStock=product.colorStock || {};
+
+  const stock=Object.prototype.hasOwnProperty.call(colorStock,color)
+    ? Number(colorStock[color])
+    : Number(product.stock)||0;
+
+  const stockDisplay=document.getElementById("selectedStock");
+
+  if(stockDisplay){
+    stockDisplay.textContent=
+      stock>0 ? stock+" left" : "Out of stock";
+  }
+
+  if(quantity){
+    quantity.max=stock;
+    quantity.value=stock>0 ? 1 : 0;
+    quantity.disabled=stock<=0;
+  }
+
+  const button=document.querySelector(
+    '#productModal button[onclick*="addToCart"]'
+  );
+
+  if(button){
+    button.disabled=stock<=0;
+  }
+}
+
+
+function closeProductDetails(){
+  document.getElementById("productModal").classList.remove("show");
+}
+
+
+let cart=[];
+
+function addToCart(product){
+  const colorSelect=document.getElementById("cartColor");
+  const quantityInput=document.getElementById("cartQuantity");
+
+  const color=colorSelect ? colorSelect.value : "";
+  const quantity=parseInt(quantityInput ? quantityInput.value : "1",10);
+
+  if(!color){
+    alert("Please choose a colour.");
+    return;
+  }
+
+  if(!Number.isFinite(quantity) || quantity<1){
+    alert("Please choose a valid quantity.");
+    return;
+  }
+
+  const colorStock=product.colorStock||{};
+  const available=Object.prototype.hasOwnProperty.call(colorStock,color)
+    ? Number(colorStock[color])
+    : Number(product.stock)||0;
+
+  if(quantity>available){
+    alert("Only "+available+" left in "+color+".");
+    return;
+  }
+
+  const existing=cart.find(item=>
+    item.productId===product.id && item.color===color
+  );
+
+  if(existing){
+    if(existing.quantity+quantity>available){
+      alert("You cannot add more than "+available+" of this colour.");
+      return;
+    }
+
+    existing.quantity+=quantity;
+  }else{
+    cart.push({
+      productId:product.id,
+      name:product.name,
+      price:Number(product.price)||0,
+      image:product.image||"",
+      color,
+      quantity
+    });
+  }
+
+  updateCartDisplay();
+
+  alert("Added to cart!");
+}
+
+function updateCartDisplay(){
+  let cartButton=document.getElementById("cartButton");
+
+  if(!cartButton){
+    cartButton=document.createElement("button");
+    cartButton.id="cartButton";
+    cartButton.type="button";
+    cartButton.onclick=showCart;
+
+    cartButton.style.position="fixed";
+    cartButton.style.right="20px";
+    cartButton.style.bottom="20px";
+    cartButton.style.zIndex="10000";
+    cartButton.style.padding="14px 20px";
+    cartButton.style.border="0";
+    cartButton.style.borderRadius="30px";
+    cartButton.style.background="#1688ff";
+    cartButton.style.color="#fff";
+    cartButton.style.fontWeight="bold";
+    cartButton.style.cursor="pointer";
+
+    document.body.appendChild(cartButton);
+  }
+
+  const totalItems=cart.reduce((sum,item)=>sum+item.quantity,0);
+
+  cartButton.textContent="🛒 Cart ("+totalItems+")";
+}
+
+function showCart(){
+  const modal=document.getElementById("productModal");
+
+  if(!cart.length){
+    modal.innerHTML=`
+      <div class="modal-box">
+        <button class="close-modal" onclick="closeProductDetails()">×</button>
+        <h2>Your Cart</h2>
+        <p>Your cart is empty.</p>
+      </div>
+    `;
+
+    modal.classList.add("show");
+    return;
+  }
+
+  const items=cart.map((item,index)=>`
+    <div style="
+      display:flex;
+      gap:12px;
+      align-items:center;
+      padding:12px 0;
+      border-bottom:1px solid #17452b;
+    ">
+
+      ${item.image
+        ? `<img src="${item.image}"
+            style="width:70px;height:70px;object-fit:contain;border-radius:8px;background:#123c28">`
+        : "📦"
+      }
+
+      <div style="flex:1">
+        <strong>${item.name}</strong>
+        <div>${item.color}</div>
+        <div>${item.quantity} × $${item.price.toFixed(2)}</div>
+      </div>
+
+      <button
+        type="button"
+        onclick="removeFromCart(${index})"
+        style="background:#d93636">
+        Remove
+      </button>
+
+    </div>
+  `).join("");
+
+  const total=cart.reduce(
+    (sum,item)=>sum+(item.price*item.quantity),0
+  );
+
+  modal.innerHTML=`
+    <div class="modal-box">
+
+      <button class="close-modal" onclick="closeProductDetails()">×</button>
+
+      <h2>Your Cart</h2>
+
+      ${items}
+
+      <div style="
+        margin-top:20px;
+        font-size:20px;
+        font-weight:bold;
+      ">
+        Total: $${total.toFixed(2)}
+      </div>
+
+      <button
+        type="button"
+        style="width:100%;margin-top:20px"
+        onclick="showCheckout()">
+        Checkout
+      </button>
+
+    </div>
+  `;
+
+  modal.classList.add("show");
+}
+
+function removeFromCart(index){
+  cart.splice(index,1);
+  updateCartDisplay();
+  showCart();
+}
+
+function showCheckout(){
+
+  if(!cart.length){
+    alert("Your cart is empty.");
+    return;
+  }
+
+  const modal=document.getElementById("productModal");
+
+  modal.innerHTML=`
+    <div class="modal-box">
+
+      <button
+        class="close-modal"
+        onclick="showCart()">
+        ×
+      </button>
+
+      <h2>Checkout</h2>
+
+      <p style="color:#9ebbaa;margin-bottom:20px">
+        Delivery is currently available in Zimbabwe and South Africa.
+      </p>
+
+      <form id="checkoutForm">
+
+        <label>Full Name</label>
+        <input
+          id="customerName"
+          type="text"
+          placeholder="Your full name"
+          required>
+
+        <label>Phone Number</label>
+        <input
+          id="customerPhone"
+          type="tel"
+          placeholder="e.g. +263 78 527 7586"
+          required>
+
+        <label>Country</label>
+        <select id="customerCountry" required>
+          <option value="">Choose country</option>
+          <option value="Zimbabwe">Zimbabwe</option>
+          <option value="South Africa">South Africa</option>
+        </select>
+
+        <label>City / Town</label>
+        <input
+          id="customerCity"
+          type="text"
+          placeholder="Your city or town"
+          required>
+
+        <label>Delivery Address</label>
+        <textarea
+          id="customerAddress"
+          placeholder="House number, street, suburb, or other delivery details"
+          required></textarea>
+
+        <label>Additional Notes</label>
+        <textarea
+          id="customerNotes"
+          placeholder="Optional delivery instructions"></textarea>
+
+        <div style="
+          margin-top:18px;
+          padding:15px;
+          background:#103b25;
+          border-radius:10px;
+        ">
+          <strong>Order Total: $${cart.reduce(
+            (sum,item)=>sum+(item.price*item.quantity),0
+          ).toFixed(2)}</strong>
+        </div>
+
+        <button
+          type="submit"
+          style="width:100%;margin-top:18px">
+          Place Order
+        </button>
+
+        <div
+          id="checkoutMessage"
+          style="margin-top:15px">
+        </div>
+
+      </form>
+
+    </div>
+  `;
+
+  modal.classList.add("show");
+
+  document
+    .getElementById("checkoutForm")
+    .addEventListener("submit",placeOrder);
+}
+
+async function placeOrder(e){
+
+  e.preventDefault();
+
+  const message=document.getElementById("checkoutMessage");
+
+  message.textContent="Placing your order...";
+
+  const orderData={
+    name:document.getElementById("customerName").value.trim(),
+    phone:document.getElementById("customerPhone").value.trim(),
+    country:document.getElementById("customerCountry").value,
+    city:document.getElementById("customerCity").value.trim(),
+    address:document.getElementById("customerAddress").value.trim(),
+    notes:document.getElementById("customerNotes").value.trim(),
+
+    items:cart.map(item=>({
+      productId:item.productId,
+      color:item.color,
+      quantity:item.quantity
+    }))
+  };
+
+  try{
+
+    const response=await fetch("/api/orders",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(orderData)
+    });
+
+    const data=await response.json();
+
+    if(!data.success){
+      message.textContent=data.error || "Could not place order.";
+      return;
+    }
+
+    cart=[];
+
+    updateCartDisplay();
+
+    document.getElementById("productModal").innerHTML=`
+      <div class="modal-box">
+
+        <h2>Order Placed! 🎉</h2>
+
+        <p style="margin-top:15px">
+          Thank you for your order.
+        </p>
+
+        <p>
+          Your order number is:
+          <strong>#${data.orderId}</strong>
+        </p>
+
+        <p style="color:#9ebbaa">
+          We will contact you using the phone number you provided
+          to arrange delivery.
+        </p>
+
+        <button
+          type="button"
+          style="width:100%;margin-top:20px"
+          onclick="closeProductDetails();loadProducts()">
+          Continue Shopping
+        </button>
+
+      </div>
+    `;
+
+  }catch(error){
+
+    console.error("Checkout error:",error);
+
+    message.textContent=
+      "Unable to place order. Please try again.";
+  }
+}
+
+updateCartDisplay();
+
+loadProducts();
+
+</script>
+
+</body>
+</html>
